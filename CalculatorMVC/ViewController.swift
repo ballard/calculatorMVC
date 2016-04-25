@@ -13,7 +13,12 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var display: UILabel!
     
+    let piSymbol = "π"
+    
+    
     var userIsInTheMiddleOfTypingANumber = false
+    
+    var operandStack = [Double]()
     
     var displayValue: Double? {
         get{
@@ -34,12 +39,58 @@ class ViewController: UIViewController {
     
     @IBAction func touchDigit(sender: UIButton) {
         
-        let digit = sender.currentTitle
+        let digit = sender.currentTitle!
         
+        if userIsInTheMiddleOfTypingANumber{
+            
+            display.text = display.text! + digit
+            
+        } else {
+            
+            display.text = digit
+            
+        }
         
-        
+        userIsInTheMiddleOfTypingANumber = true
         
     }
+    
+    @IBAction func operate(sender: UIButton) {
+        
+        if let operation = sender.currentTitle {
+            
+            if userIsInTheMiddleOfTypingANumber{
+                enter()
+            }
+        
+            switch operation {
+                case piSymbol: performOperation {$0 * M_PI}
+                default:
+                    break
+            }
+        }
+    }
+    
+    func performOperation (operation:(Double) -> Double) {
+        if operandStack.count >= 1{
+            displayValue = operation(operandStack.removeLast())
+            enter()
+        }
+    }
+    
+    @IBAction func enter() {
+        
+        if let input = displayValue {
+            operandStack.append(input)
+            userIsInTheMiddleOfTypingANumber = false
+        }
+        
+        print("operandStack: \(operandStack)")
+        
+    }
+    
+    
+    
     
     
 
