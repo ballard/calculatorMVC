@@ -11,16 +11,20 @@ import UIKit
 class ViewController: UIViewController {
 
 
-    @IBOutlet weak var display: UILabel!
+    @IBOutlet private weak var display: UILabel!
     
-    let piSymbol = "π"
+    @IBOutlet weak var history: UILabel!
     
+
+    private let zeroSymbol = "0"
     
-    var userIsInTheMiddleOfTypingANumber = false
+    private var userIsInTheMiddleOfTypingANumber = false
     
-    var operandStack = [Double]()
+    let decimalSeparator = NSNumberFormatter().decimalSeparator
     
-    var displayValue: Double? {
+    private var brain = CalculatorBrain()
+    
+    private var displayValue: Double? {
         get{
             if let result = NSNumberFormatter().numberFromString(display.text!)?.doubleValue{
                 return result
@@ -32,67 +36,56 @@ class ViewController: UIViewController {
             if let result = newValue {
                 display.text = String(result)
             } else {
-                display.text = "0"
+                display.text = "Error"
             }
         }
     }
     
-    @IBAction func touchDigit(sender: UIButton) {
-        
-        let digit = sender.currentTitle!
+    @IBAction func touchDecimalSeparator() {
         
         if userIsInTheMiddleOfTypingANumber{
-            
-            display.text = display.text! + digit
-            
+            if display.text!.rangeOfString(decimalSeparator) == nil {
+                display.text = display.text! + decimalSeparator
+            }
         } else {
+            display.text = decimalSeparator
+        }
+        userIsInTheMiddleOfTypingANumber = true
+    }
+    
+    @IBAction private func touchDigit(sender: UIButton) {
+        
+        if let digit = sender.currentTitle {
+        
+            if userIsInTheMiddleOfTypingANumber{
+            
+                display.text = display.text! + digit
+            
+            } else {
             
             display.text = digit
-            
+            }
+        
+            userIsInTheMiddleOfTypingANumber = true
         }
-        
-        userIsInTheMiddleOfTypingANumber = true
-        
     }
     
-    @IBAction func operate(sender: UIButton) {
+    @IBAction private func operate(sender: UIButton) {
+        
+        if userIsInTheMiddleOfTypingANumber{
+            if let operand = displayValue{
+                brain.setOperand(operand)
+                history.text = history.text! + String(operand)
+                userIsInTheMiddleOfTypingANumber = false
+            }
+        }
         
         if let operation = sender.currentTitle {
-            
-            if userIsInTheMiddleOfTypingANumber{
-                enter()
-            }
-        
-            switch operation {
-                case piSymbol: performOperation {$0 * M_PI}
-                default:
-                    break
-            }
-        }
-    }
-    
-    func performOperation (operation:(Double) -> Double) {
-        if operandStack.count >= 1{
-            displayValue = operation(operandStack.removeLast())
-            enter()
-        }
-    }
-    
-    @IBAction func enter() {
-        
-        if let input = displayValue {
-            operandStack.append(input)
-            userIsInTheMiddleOfTypingANumber = false
+            brain.performOperation(operation)
+            history.text = history.text! + operation
         }
         
-        print("operandStack: \(operandStack)")
-        
+        displayValue = brain.result
     }
-    
-    
-    
-    
-    
-
 }
 

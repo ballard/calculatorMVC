@@ -12,6 +12,7 @@
 		2C3A1BBC1CCEA158008EDF05 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2C3A1BBA1CCEA158008EDF05 /* Main.storyboard */; };
 		2C3A1BBE1CCEA158008EDF05 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C3A1BBD1CCEA158008EDF05 /* Assets.xcassets */; };
 		2C3A1BC11CCEA158008EDF05 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2C3A1BBF1CCEA158008EDF05 /* LaunchScreen.storyboard */; };
+		2C3A1BCA1CCEB8FD008EDF05 /* CalculatorBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3A1BC91CCEB8FD008EDF05 /* CalculatorBrain.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		2C3A1BBD1CCEA158008EDF05 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2C3A1BC01CCEA158008EDF05 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2C3A1BC21CCEA158008EDF05 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2C3A1BC91CCEB8FD008EDF05 /* CalculatorBrain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CalculatorBrain.swift; path = ../CalculatorBrain.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,9 +56,10 @@
 		2C3A1BB51CCEA158008EDF05 /* CalculatorMVC */ = {
 			isa = PBXGroup;
 			children = (
-				2C3A1BC81CCEA177008EDF05 /* Supporting files */,
+				2C3A1BC91CCEB8FD008EDF05 /* CalculatorBrain.swift */,
 				2C3A1BB81CCEA158008EDF05 /* ViewController.swift */,
 				2C3A1BBA1CCEA158008EDF05 /* Main.storyboard */,
+				2C3A1BC81CCEA177008EDF05 /* Supporting files */,
 			);
 			path = CalculatorMVC;
 			sourceTree = "<group>";
@@ -143,6 +146,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C3A1BCA1CCEB8FD008EDF05 /* CalculatorBrain.swift in Sources */,
 				2C3A1BB91CCEA158008EDF05 /* ViewController.swift in Sources */,
 				2C3A1BB71CCEA158008EDF05 /* AppDelegate.swift in Sources */,
 			);
