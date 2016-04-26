@@ -13,13 +13,11 @@ class CalculatorBrain
     
     private var accumulator = 0.0
     
-    private let piSymbol = "π"
-    private let eSymbol = "e"
-    private let zeroSymbol = "0"
-    private let squareRootSymbol = "√"
-    
+    private var internalProgram  = [AnyObject]()
+
     func setOperand(operand: Double) {
         accumulator = operand
+        internalProgram.append(operand)
     }
     
     private var operations = [
@@ -27,6 +25,7 @@ class CalculatorBrain
         "e" : Operation.Constant(M_E),
         "√" : Operation.UnaryOperation(sqrt),
         "cos" : Operation.UnaryOperation(cos),
+        "sin" : Operation.UnaryOperation(sin),
         "±" : Operation.UnaryOperation{-$0},
         "×" : Operation.BinaryOperation{$0 * $1},
         "÷" : Operation.BinaryOperation{$0 / $1},
@@ -45,6 +44,8 @@ class CalculatorBrain
     func performOperation(symbol: String) {
         
         if let operation = operations[symbol]{
+            
+            internalProgram.append(symbol)
             
             switch operation {
             case .Constant (let value):
@@ -83,6 +84,37 @@ class CalculatorBrain
             return accumulator
         }
     }
+    
+    func clear(){
+        pending = nil
+        accumulator = 0.0
+        internalProgram.removeAll()
+    }
+    
+    typealias PropertyList = AnyObject
+    
+    var program : PropertyList{
+        get {
+            return internalProgram
+        }
+        set{
+            self.clear()
+            if let ArrayOfOps = newValue as? [AnyObject]{
+                for op in ArrayOfOps{
+                    if let operand = op as? Double{
+                        self.setOperand(operand)
+                    }
+                    else if let operation = op as? String{
+                        self.performOperation(operation)
+                    }
+                }
+                
+            }
+            
+        }
+    
+    }
+    
 }
 
 
