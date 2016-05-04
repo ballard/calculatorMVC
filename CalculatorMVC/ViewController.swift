@@ -10,13 +10,9 @@ import UIKit
 
 class ViewController: UIViewController {
 
-
     @IBOutlet private weak var display: UILabel!
     
     @IBOutlet weak var history: UILabel!
-    
-
-    private let zeroSymbol = "0"
     
     private var userIsInTheMiddleOfTypingANumber = false
     
@@ -56,14 +52,18 @@ class ViewController: UIViewController {
     @IBAction private func touchDigit(sender: UIButton) {
         
         if let digit = sender.currentTitle {
-        
+            
             if userIsInTheMiddleOfTypingANumber{
             
                 display.text = display.text! + digit
             
             } else {
-            
-            display.text = digit
+                
+                if digit == "0" && display.text?.rangeOfString("0") != nil {
+                    return
+                }
+                
+                display.text = digit
             }
         
             userIsInTheMiddleOfTypingANumber = true
@@ -75,16 +75,17 @@ class ViewController: UIViewController {
         if userIsInTheMiddleOfTypingANumber{
             if let operand = displayValue{
                 brain.setOperand(operand)
-                history.text = history.text! + String(operand)
+                //history.text = history.text! + String(operand)
                 userIsInTheMiddleOfTypingANumber = false
             }
         }
         
         if let operation = sender.currentTitle {
             brain.performOperation(operation)
-            history.text = history.text! + operation
+            //history.text = history.text! + operation
         }
         
+        history.text = brain.description
         displayValue = brain.result
     }
     

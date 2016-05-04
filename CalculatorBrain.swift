@@ -14,10 +14,26 @@ class CalculatorBrain
     private var accumulator = 0.0
     
     private var internalProgram  = [AnyObject]()
+    
+    var description = ""
+    
+    private var isPartialResult = false
 
     func setOperand(operand: Double) {
         accumulator = operand
         internalProgram.append(operand)
+        
+        if description.rangeOfString("...") != nil {
+            let range = description.endIndex.advancedBy(-3)..<description.endIndex
+            description.removeRange(range)
+        }
+        
+        if isPartialResult {
+            description += String(operand)
+        } else {
+            description = String(operand)
+//            isPartialResult = true
+        }
     }
     
     private var operations = [
@@ -49,14 +65,65 @@ class CalculatorBrain
             
             switch operation {
             case .Constant (let value):
+                
                 accumulator = value
+                
             case .UnaryOperation (let function):
+                
+                if isPartialResult{
+                    if let plusRange = description.rangeOfString("+"){
+                        let range = Range(plusRange.startIndex.successor()..<description.endIndex)
+                        description.removeRange(range)
+                        description.insertContentsOf("\(symbol)(\(accumulator))".characters, at: description.endIndex)
+                    }
+                }
+
                 accumulator = function(accumulator)
+                
+                if !isPartialResult{
+                    removeEqualsSymbol()
+                    description = "\(symbol)(\(description))"
+                }
+                
             case .BinaryOperation (let function):
+                insertAccumulatorValueIsteadOfPoints()
+                
                 executePendingBinaryOperation()
                 pending = pendingBinaryOperationInfo(binaryFunction: function, firstOperand: accumulator)
+                
+                removeEqualsSymbol()
+                description += symbol + "..."
+                
+                isPartialResult = true
+                
             case .Equals:
-                executePendingBinaryOperation()            }
+                
+                removeEqualsSymbol()
+                insertAccumulatorValueIsteadOfPoints()
+                
+                executePendingBinaryOperation()
+                
+                description += symbol
+                isPartialResult = false
+            }
+        }
+    }
+    
+    private func insertAccumulatorValueIsteadOfPoints(){
+        if let pointsRange = description.rangeOfString("..."){
+            description.removeRange(pointsRange)
+            
+            if accumulator == M_PI {
+                description = ("\(description)π")
+            } else {
+                description = ("\(description)\(accumulator)")
+            }
+        }
+    }
+    
+    private func removeEqualsSymbol(){
+        if let equalRange = description.rangeOfString("="){
+            description.removeRange(equalRange)
         }
     }
     
@@ -74,7 +141,6 @@ class CalculatorBrain
         var firstOperand: Double
     }
     
-    
     private func operate(){}
     
     var result: Double? {
@@ -89,6 +155,8 @@ class CalculatorBrain
         pending = nil
         accumulator = 0.0
         internalProgram.removeAll()
+        description = " "
+        isPartialResult = false
     }
     
     typealias PropertyList = AnyObject
@@ -108,13 +176,9 @@ class CalculatorBrain
                         self.performOperation(operation)
                     }
                 }
-                
             }
-            
         }
-    
     }
-    
 }
 
 
