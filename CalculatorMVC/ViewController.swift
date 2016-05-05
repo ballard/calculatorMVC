@@ -61,7 +61,6 @@ class ViewController: UIViewController {
     }
     
     @IBAction func random() {
-        
         displayValue = drand48()
         userIsInTheMiddleOfTypingANumber = true
     }
