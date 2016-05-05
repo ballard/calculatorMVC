@@ -37,6 +37,18 @@ class ViewController: UIViewController {
         }
     }
     
+    @IBAction func backspace() {
+        if display.text != nil {
+            if display.text!.characters.count > 1 {
+                display.text!.removeAtIndex(display.text!.endIndex.predecessor())
+            } else {
+                display.text = "0"
+                userIsInTheMiddleOfTypingANumber = false
+            }
+        }
+    }
+    
+    
     @IBAction func touchDecimalSeparator() {
         
         if userIsInTheMiddleOfTypingANumber{
