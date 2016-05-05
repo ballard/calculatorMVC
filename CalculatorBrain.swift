@@ -18,6 +18,8 @@ class CalculatorBrain
     var description = ""
     
     private var isPartialResult = false
+    
+    let descriptionNumberFormatter = NSNumberFormatter()
 
     func setOperand(operand: Double) {
         accumulator = operand
@@ -28,11 +30,19 @@ class CalculatorBrain
             description.removeRange(range)
         }
         
-        if isPartialResult {
-            description += String(operand)
+        if operand % 1 == 0 {
+            descriptionNumberFormatter.allowsFloats = false
         } else {
-            description = String(operand)
-//            isPartialResult = true
+            descriptionNumberFormatter.allowsFloats = true
+            descriptionNumberFormatter.maximumFractionDigits = 6
+        }
+        
+        let operandString = descriptionNumberFormatter.stringFromNumber(operand)!
+        
+        if isPartialResult {
+            description += operandString//String(operand)
+        } else {
+            description = operandString//String(operand)
         }
     }
     
@@ -67,6 +77,13 @@ class CalculatorBrain
             case .Constant (let value):
                 
                 accumulator = value
+                removeSymbol("...")
+                
+                if isPartialResult {
+                    description += symbol
+                } else {
+                    description = symbol
+                }
                 
             case .UnaryOperation (let function):
                 
@@ -74,16 +91,21 @@ class CalculatorBrain
                     if let plusRange = description.rangeOfString("+"){
                         let range = Range(plusRange.startIndex.successor()..<description.endIndex)
                         description.removeRange(range)
-                        description.insertContentsOf("\(symbol)(\(accumulator))".characters, at: description.endIndex)
+                        if accumulator == M_PI {
+                            description.insertContentsOf("\(symbol)π".characters, at: description.endIndex)
+                        } else {
+                            description.insertContentsOf("\(symbol)(\(accumulator))".characters, at: description.endIndex)
+                        }
                     }
                 }
 
                 accumulator = function(accumulator)
                 
                 if !isPartialResult{
-                    removeEqualsSymbol()
+                    removeSymbol("=")
                     description = "\(symbol)(\(description))"
                 }
+                isPartialResult = false
                 
             case .BinaryOperation (let function):
                 insertAccumulatorValueIsteadOfPoints()
@@ -91,14 +113,14 @@ class CalculatorBrain
                 executePendingBinaryOperation()
                 pending = pendingBinaryOperationInfo(binaryFunction: function, firstOperand: accumulator)
                 
-                removeEqualsSymbol()
+                removeSymbol("=")
                 description += symbol + "..."
                 
                 isPartialResult = true
                 
             case .Equals:
                 
-                removeEqualsSymbol()
+                removeSymbol("=")
                 insertAccumulatorValueIsteadOfPoints()
                 
                 executePendingBinaryOperation()
@@ -121,8 +143,8 @@ class CalculatorBrain
         }
     }
     
-    private func removeEqualsSymbol(){
-        if let equalRange = description.rangeOfString("="){
+    private func removeSymbol(symbol: String){
+        if let equalRange = description.rangeOfString(symbol){
             description.removeRange(equalRange)
         }
     }

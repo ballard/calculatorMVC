@@ -1,4 +1,4 @@
-//
+    //
 //  ViewController.swift
 //  CalculatorMVC
 //
@@ -18,6 +18,8 @@ class ViewController: UIViewController {
     
     let decimalSeparator = NSNumberFormatter().decimalSeparator
     
+    let displayNumberFormatter = NSNumberFormatter()
+    
     private var brain = CalculatorBrain()
     
     private var displayValue: Double? {
@@ -30,7 +32,17 @@ class ViewController: UIViewController {
         }
         set{
             if let result = newValue {
-                display.text = String(result)
+                
+                if result % 1 == 0 {
+                    displayNumberFormatter.allowsFloats = false
+                } else {
+                    displayNumberFormatter.allowsFloats = true
+                    displayNumberFormatter.maximumFractionDigits = 6
+                }
+                
+                display.text = displayNumberFormatter.stringFromNumber(result)
+                
+//                display.text = String(result)
             } else {
                 display.text = "Error"
             }
@@ -46,6 +58,12 @@ class ViewController: UIViewController {
                 userIsInTheMiddleOfTypingANumber = false
             }
         }
+    }
+    
+    @IBAction func random() {
+        
+        displayValue = drand48()
+        userIsInTheMiddleOfTypingANumber = true
     }
     
     
@@ -84,17 +102,15 @@ class ViewController: UIViewController {
     
     @IBAction private func operate(sender: UIButton) {
         
-        if userIsInTheMiddleOfTypingANumber{
+        if userIsInTheMiddleOfTypingANumber {
             if let operand = displayValue{
                 brain.setOperand(operand)
-                //history.text = history.text! + String(operand)
                 userIsInTheMiddleOfTypingANumber = false
             }
         }
         
         if let operation = sender.currentTitle {
             brain.performOperation(operation)
-            //history.text = history.text! + operation
         }
         
         history.text = brain.description
@@ -115,13 +131,11 @@ class ViewController: UIViewController {
     }
     
     @IBAction func clear() {
-        
         brain.clear()
-        
         display.text = "0"
         history.text = " "
+        userIsInTheMiddleOfTypingANumber = false
     }
-    
 }
 
 
