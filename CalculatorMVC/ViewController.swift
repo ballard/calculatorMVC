@@ -32,17 +32,7 @@ class ViewController: UIViewController {
         }
         set{
             if let result = newValue {
-                
-                if result % 1 == 0 {
-                    displayNumberFormatter.allowsFloats = false
-                } else {
-                    displayNumberFormatter.allowsFloats = true
-                    displayNumberFormatter.maximumFractionDigits = 6
-                }
-                
-                display.text = displayNumberFormatter.stringFromNumber(result)
-                
-//                display.text = String(result)
+                display.text = CalculatorBrain.formatOperand(displayNumberFormatter, operand: result)
             } else {
                 display.text = "Error"
             }
@@ -65,17 +55,15 @@ class ViewController: UIViewController {
         userIsInTheMiddleOfTypingANumber = true
     }
     
-    
     @IBAction func touchDecimalSeparator() {
-        
         if userIsInTheMiddleOfTypingANumber{
             if display.text!.rangeOfString(decimalSeparator) == nil {
                 display.text = display.text! + decimalSeparator
             }
         } else {
-            display.text = decimalSeparator
+            display.text = "0" + decimalSeparator
+            userIsInTheMiddleOfTypingANumber = true
         }
-        userIsInTheMiddleOfTypingANumber = true
     }
     
     @IBAction private func touchDigit(sender: UIButton) {
@@ -100,6 +88,10 @@ class ViewController: UIViewController {
     }
     
     @IBAction private func operate(sender: UIButton) {
+        
+//        if (sender.currentTitle == "π" || sender.currentTitle == "e") && (history.text!.characters.last == "π" || history.text!.characters.last == "e") {
+//            return
+//        }
         
         if userIsInTheMiddleOfTypingANumber {
             if let operand = displayValue{
@@ -126,6 +118,7 @@ class ViewController: UIViewController {
         if savedProgram != nil{
             brain.program = savedProgram!
             displayValue = brain.result
+            history.text = brain.description
         }
     }
     
